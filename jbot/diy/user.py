@@ -10,22 +10,14 @@ import time
 import requests
 import json
 
-from datetime import timedelta
-
-from telethon.tl.functions.channels import JoinChannelRequest
-from telethon.tl.functions.messages import ImportChatInviteRequest
-from telethon.tl.functions.messages import GetAllStickersRequest
-from telethon.tl.functions.messages import GetStickerSetRequest
-from telethon.tl.types import InputStickerSetID
-from telethon import events, TelegramClient, Button
+from telethon import events, TelegramClient
 from .. import chat_id, jdbot, logger, api_id, api_hash, proxystart, \
-    proxy, _ConfigDir, _JdDir, TOKEN, _JdbotDir, _ScriptsDir
-from ..bot.utils import cmd, V4, QL, _ConfigFile, myck, backfile
-from ..diy.utils import getbean, my_chat_id, myzdjr_chatIds, \
-    shoptokenIds
+    proxy, _ConfigDir, _JdDir, TOKEN, _ScriptsDir
+from ..bot.utils import cmd, V4, QL, _ConfigFile, myck
+from ..diy.utils import getbean, my_chat_id, myzdjr_chatIds
 from ..diy.utils import read, write, rwcon
 import random
-from config import bot_name
+from jbot.diy.config import bot_name
 
 bot_id = int(TOKEN.split(":")[0])
 
