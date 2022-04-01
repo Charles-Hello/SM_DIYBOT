@@ -128,6 +128,9 @@ async def 重启机器人(event):
         logger.error(f"错误--->{str(e)}")
 
 
+
+
+
 @client.on(events.NewMessage(from_users=chat_id,
                              pattern=r'(export\s)?\w*=(".*"|\'.*\')'))
 async def 增加export变量(event):
