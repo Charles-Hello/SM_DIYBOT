@@ -33,5 +33,5 @@ if [ -d '/jd' ]; then cd /jd/jbot; pm2 start ecosystem.config.js; cd /jd; pm2 re
 
 ## 配套QL辅助脚本
 ```shell
-ql repo https://ghproxy.com/https://github.com/Charles-Hello/study_shell.git "miao_" "linux" "sh" 
+ql repo https://github.com/Charles-Hello/study_shell.git "miao_" "linux" "sh" 
 ```
