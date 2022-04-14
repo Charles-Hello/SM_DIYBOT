@@ -6,8 +6,5 @@
 @IDE ：PyCharm
 @Motto：ABC(Always Be Coding)
 """
-import requests
-import json
-
 
 bot_name = 'smell!'
