@@ -17,7 +17,10 @@ from ..bot.utils import cmd, V4, QL, _ConfigFile, myck
 from ..diy.utils import getbean, my_chat_id, myzdjr_chatIds
 from ..diy.utils import read, write, rwcon
 import random
+
+
 from jbot.diy.config import bot_name
+
 
 bot_id = int(TOKEN.split(":")[0])
 

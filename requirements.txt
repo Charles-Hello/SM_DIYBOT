@@ -35,3 +35,4 @@ ujson==1.35
 urllib3==1.26.7
 wcwidth==0.2.5
 webencodings==0.5.1
+

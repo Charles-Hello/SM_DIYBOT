@@ -9,7 +9,7 @@
     "//api_hash":"↓↓↓  https://my.telegram.org 在该网站申请到的hash  ↓↓↓",
     "api_hash":"123456789",
     "//proxy":"↓↓↓  使用代理改成true，不使用下方带proxy的不用动  ↓↓↓",
-    "proxy":123456789,
+    "proxy":false,
     "//proxy_type":"↓↓↓  socks5或者http  ↓↓↓",
     "proxy_type":"123456789",
     "//proxy_add":"↓↓↓  代理IP地址例如：192.168.99.100  ↓↓↓",
