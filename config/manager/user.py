@@ -34,7 +34,7 @@ import random
 import json
 from datetime import datetime
 import time
-from  ..diy.config import send_text_msg, bot_name, bot_url, bot_headers, \
+from  ..diy.configpro import send_text_msg, bot_name, bot_url, bot_headers, \
     ql_bot, ql_log_bot, user_id, tnanko
 
 bot_id = int(TOKEN.split(":")[0])
