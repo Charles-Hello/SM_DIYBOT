@@ -15,7 +15,7 @@ root=root; if [ -f $root/smell.sh ]; then rm -f $root/smell.sh; fi; cd $root; wg
 
 
 ## Smell_Bot一键搭建
-首先进入容器中执行以下命令，然后按提示操作即可
+首先进入docker容器内执行以下命令，然后按提示操作即可
 ```shell
 if [ -d "/jd" ]; then root=/jd; else root=/ql;if [ -f $root/diybot.sh ]; then rm -f $root/diybot.sh; fi; cd $root; wget https://raw.githubusercontent.com/Charles-Hello/Study_Shell/master/diybot.sh; bash diybot.sh; fi
 ```

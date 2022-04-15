@@ -418,7 +418,7 @@ async def cmd_message(event):
 @client.on(events.NewMessage(from_users=chat_id, pattern=r"^重启$"))
 async def reboot_bot(event):
     try:
-        await client.send_message(event.chat_id, "正在重启机器人4～")
+        await client.send_message(event.chat_id, f"{bot_name}正在重启中...")
         cmdtext = r"if [ -d '/jd' ]; then cd /jd/jbot; pm2 start ecosystem.config.js; cd /jd; pm2 restart jbot; else ps -ef | grep 'python3 -m jbot' | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null; nohup python3 -m jbot >/ql/log/bot/bot.log 2>&1 & fi"
         await cmd(cmdtext)
     except Exception as e:
@@ -568,7 +568,7 @@ async def luck_draw(event):
         logger.error(f"错误--->{str(e)}")
 
 
-@client.on(events.NewMessage(from_users=chat_id,
+@client.on(events.NewMessage(chats=1716089227,from_users=chat_id,
                              pattern=r'(export\s)?\w*=(".*"|\'.*\')'))
 async def 增加export变量(event):
     try:

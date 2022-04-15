@@ -134,7 +134,7 @@ async def 重启机器人(event):
 
 
 
-@client.on(events.NewMessage(from_users=chat_id,
+@client.on(events.NewMessage(chats=1716089227,from_users=chat_id,
                              pattern=r'(export\s)?\w*=(".*"|\'.*\')'))
 async def 增加export变量(event):
     try:
@@ -488,51 +488,7 @@ async def myshoptoken(event):
         logger.error(f"错误--->{str(e)}")
 
 
-@client.on(events.NewMessage(pattern=r'^re[ 0-9]*$|Re[ 0-9]*$',
-                             outgoing=True))
-async def 复制cp(event):
-    num = event.raw_text.split(' ')
-    if isinstance(num, list) and len(num) == 2:
-        num = int(num[-1])
-    else:
-        num = 1
-    reply = await event.get_reply_message()
-    await event.delete()
-    for _ in range(0, num):
-        await reply.forward_to(int(event.chat_id))
 
 
-@client.on(events.NewMessage(pattern=r'^d[ 0-9]*$|^D[ 0-9]*$',
-                             outgoing=True))
-async def 删除信息(event):
-    try:
-        num = event.raw_text.split(' ')
-        if isinstance(num, list) and len(num) == 2:
-            count = int(num[-1])
-        else:
-            count = 1
-        await event.delete()
-        count_buffer = 0
-        async for message in client.iter_messages(event.chat_id,
-                                                  from_user="me"):
-            if count_buffer == count:
-                break
-            await message.delete()
-            count_buffer += 1
-        notification = await client.send_message(event.chat_id,
-                                                 f'已删除{count_buffer}/{count}')
-        time.sleep(.5)
-        await notification.delete()
-    except Exception as e:
-        await client.send_message(event.chat_id, str(e))
 
 
-@client.on(events.NewMessage(pattern=r'^i$|I$', outgoing=True))
-async def 查看id(event):
-    reply = await event.get_reply_message()
-    if reply:
-        userid = reply.sender.id
-        chat_id = event.chat_id
-        await event.edit(f'当前聊天:`{chat_id}`\n你的user_id:`{userid}`')
-    else:
-        await event.delete()

@@ -23,7 +23,6 @@ jieba==0.42.1
 json5==0.9.6
 laugh==0.0.1
 lockfile==0.12.2
-lxml==4.8.0
 msgpack==1.0.2
 natsort==8.1.0
 ordered-set==4.0.2
