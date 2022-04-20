@@ -4,26 +4,11 @@
 
 import asyncio
 import datetime
-from itertools import chain
 import os
 import re
 import sys
-import time
 import requests
-from requests import get, post
-from datetime import timedelta
-from os.path import exists
-from os import mkdir, remove
-from telethon.client import chats
-from telethon.tl.functions import messages
-from telethon.tl.types import ChannelForbidden, Message
-
-from telethon.tl.functions.channels import JoinChannelRequest
-from telethon.tl.functions.messages import ImportChatInviteRequest
-from telethon.tl.functions.messages import GetAllStickersRequest
-from telethon.tl.functions.messages import GetStickerSetRequest
-from telethon.tl.types import InputStickerSetID
-from telethon import events, TelegramClient, Button,functions
+from telethon import events, TelegramClient,functions
 from .. import chat_id, jdbot, logger, api_id, api_hash, proxystart, \
     proxy, _ConfigDir, _JdDir, TOKEN, _JdbotDir, _ScriptsDir
 from ..bot.utils import cmd, V4, QL, _ConfigFile, myck, backfile
@@ -36,7 +21,7 @@ from datetime import datetime
 import time
 from  ..diy.configpro import send_text_msg, bot_name, bot_url, bot_headers, \
     ql_bot, ql_log_bot, user_id, tnanko
-
+import traceback
 bot_id = int(TOKEN.split(":")[0])
 
 if proxystart:
@@ -198,39 +183,12 @@ async def 转发日记(event):
         logger.error(f"错误--->{str(e)}")
 
 
-@client.on(events.NewMessage(from_users=chat_id,
-                             pattern=r"^b\d*$|^c\d*$|^B\d*$|^C\d*$"))
+@client.on(events.NewMessage(from_users=chat_id,pattern=r"^b\d*$|^c\d*$|^B\d*$|^C\d*$"))
 async def get_bean(event):
     try:
         message = event.message.text
-        for bot in ql_bot:
-            await client.send_message(bot[1:], '/bean 1')
-        msg = await client.edit_message(event.chat_id,
-                                        event.message.id, "正在查询，请稍后")
-        if "b" in message or 'B' in message:
-            if re.search(r"\d", message):
-                num = re.findall("\d+", message)[0]
-            else:
-                num = 1
-            await client.send_message(bot_id, f"/bean {num}")
-            await asyncio.sleep(7)
-            await client.delete_messages(event.chat_id, msg)
-            _botimg = _JdDir + '/log/bean.jpg'
-            msg = await client.send_message(event.chat_id,
-                                            f'您的账号{num}收支情况',
-                                            file=_botimg)
-        else:
-            if re.search(r"\d", message):
-                num = re.findall("\d+", message)[0]
-            else:
-                num = 1
-            await client.send_message(bot_id, f"/chart {num}")
-            await asyncio.sleep(7)
-            _botimg = _JdDir + '/log/bot/bean.jpeg'
-            await client.delete_messages(event.chat_id, msg)
-            msg = await client.send_message(event.chat_id,
-                                            f'您的账号{num}收支情况',
-                                            file=_botimg)
+        for _bot in ql_bot:
+            await client.send_message(_bot, '/bean 1')
     except Exception as e:
         name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
         function = "函数名：" + sys._getframe().f_code.co_name
@@ -239,7 +197,12 @@ async def get_bean(event):
         logger.error(f"错误--->{str(e)}")
 
 
-@client.on(events.NewMessage(chats=-1001235868507, pattern=r"/cmd.*"))
+
+
+
+
+
+@client.on(events.NewMessage(chats=1716089227, pattern=r"/cmd.*"))
 async def cmd_run(event):
     try:
         message = event.message.text
@@ -256,9 +219,9 @@ async def cmd_run(event):
     except Exception as e:
         name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
         function = "函数名：" + sys._getframe().f_code.co_name
-        await client.send_message(-1001690338060,
-                                  f"「😡报错😡」\n\n{name}\n{function}\n错误原因：{str(e)}\n报错行数：{str(e.__traceback__.tb_lineno)}行\n错误代码如下👇\n\n{message}")
+        await client.send_message(-1001690338060,f"「😡报错😡」\n\n{name}\n{function}\n错误原因：{str(e)}\n报错行数：{str(e.__traceback__.tb_lineno)}行\n错误代码如下👇\n\n{message}")
         logger.error(f"错误--->{str(e)}")
+
 
 
 @client.on(events.NewMessage(chats=ql_bot))
@@ -386,33 +349,16 @@ async def delete_messages(event):
 async def user(event):
     try:
         message = event.message.text
-        msg = await client.edit_message(event.chat_id,
-                                        event.message.id, bot_name)
+        msg = await client.edit_message(event.chat_id,event.message.id, bot_name)
         await asyncio.sleep(1)
         await msg.delete()
     except Exception as e:
-        title = "【💥错误💥】"
-        name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
-        function = "函数名：" + sys._getframe().f_code.co_name
-        tip = '建议百度/谷歌进行查询'
-        await client.send_message(-1001690338060,
-                                  f"「😡报错😡」\n\n{name}\n{function}\n错误原因：{str(e)}\n报错行数：{str(e.__traceback__.tb_lineno)}行\n错误代码如下👇\n\n{message}")
-        logger.error(f"错误--->{str(e)}")
-
-
-# 监控高级user
-@client.on(events.NewMessage(from_users=chat_id, pattern=r"^/cmd.*"))
-async def cmd_message(event):
-    try:
-        message = event.message.text
-        for bot in ql_bot[1:]:
-            await client.send_message(bot, message)
-    except Exception as e:
         name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
         function = "函数名：" + sys._getframe().f_code.co_name
         await client.send_message(-1001690338060,
                                   f"「😡报错😡」\n\n{name}\n{function}\n错误原因：{str(e)}\n报错行数：{str(e.__traceback__.tb_lineno)}行\n错误代码如下👇\n\n{message}")
         logger.error(f"错误--->{str(e)}")
+
 
 
 @client.on(events.NewMessage(from_users=chat_id, pattern=r"^重启$"))
@@ -436,84 +382,96 @@ def mycron(lines):
     return cronreg.search(lines).group()
 
 
-_Auth = f'{_ConfigDir}/auth.json'
 
 
-async def diy_mycronup(client, resp, filename, msg, path):
+@client.on(events.NewMessage(chats=-1001235868507))
+async def huqun_id(event):
     try:
+        message = event.message.text
         try:
-            cron = mycron(resp)
-            msg = await client.send_message(2090905534,
-                                            f"这是我识别的定时\n```{cron}```")
-        except:
-            msg = await client.send_message(2090905534,
-                                            f"我无法识别定时，将使用默认定时\n```0 0 * * *```")
-        await asyncio.sleep(1.5)
-        await client.delete_messages(chat_id, msg)
-        if QL:
-            crondata = {"name": f'{filename.split(".")[0]}',
-                        "command": f'task {path}/{filename}',
-                        "schedule": f'{cron}'}
-            with open(_Auth, 'r', encoding='utf-8') as f:
-                auth = json.load(f)
-            qlcron('add', crondata, auth['token'])
-        await client.send_message(chat_id, '添加定时任务成功')
+            if len(message) == 32 and message.isalnum:
+                cmd = f'task gua_jointaem3 {message}'
+                with open('/ql/config/cmd.txt', 'r') as f1:
+                    a = f1.read()
+                if cmd in a:
+                    return
+                else:
+                    with open('/ql/config/cmd.txt', 'a+') as f1:
+                        f1.write(message + '\n')
+                    for bot in ql_bot:
+                        await client.send_message(bot, f'/cmd {cmd}')
+            if len(message) == 34 and "_" in message:
+                if "/cmd export guaopencard_actid=" not in message:
+                    cmdtext = f"/cmd export guaopencard_actid='{message}' && task gua_opencardAll1.js"
+                    with open('/ql/config/cmd.txt', 'r') as f1:
+                        a = f1.read()
+                    if cmdtext in a:
+                        return
+                    else:
+                        with open('/ql/config/cmd.txt', 'a+') as f1:
+                            f1.write(message + '\n')
+                        for bot in ql_bot:
+                            await client.send_message(bot, f'{cmdtext}')
+            elif "/cmd export guaopencard_actid=" in message:
+                cmdtext = message
+                with open('/ql/config/cmd.txt', 'r') as f1:
+                    a = f1.read()
+                if cmdtext in a:
+                    return
+                else:
+                    with open('/ql/config/cmd.txt', 'a+') as f1:
+                        f1.write(message + '\n')
+                    for bot in ql_bot:
+                        await client.send_message(bot, cmdtext)
+        except Exception as e:
+            title = "【💥错误💥】"
+            name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
+            function = "函数名：" + e.__traceback__.tb_frame.f_code.co_name
+            details = "错误详情：第 " + str(e.__traceback__.tb_lineno) + " 行"
+            await jdbot.send_message(chat_id, f"{title}\n\n{name}\n{function}\n错误原因：{str(e)}\n{details}")
+            logger.error(f"错误--->{str(e)}")
     except Exception as e:
         title = "【💥错误💥】"
         name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
-        function = "函数名：" + sys._getframe().f_code.co_name
-        tip = '建议百度/谷歌进行查询'
-        await client.send_message(-1001690338060,
-                                  f"「😡报错😡」\n\n{name}\n{function}\n错误原因：{str(e)}\n报错行数：{str(e.__traceback__.tb_lineno)}行\n错误代码如下👇\n\n{filename}")
+        function = "函数名：" + e.__traceback__.tb_frame.f_code.co_name
+        details = "错误详情：第 " + str(e.__traceback__.tb_lineno) + " 行"
+        await jdbot.send_message(chat_id, f"{title}\n\n{name}\n{function}\n错误原因：{str(e)}\n{details}")
         logger.error(f"错误--->{str(e)}")
 
 
-@client.on(events.NewMessage(chats=[-1001235868507, 1716089227],
-                             from_users=[1049578757, chat_id]))
-async def 下载cmd加cron2(event):
+@client.on(events.NewMessage(chats=[-1001235868507, 1716089227],from_users=[1049578757, chat_id]))
+async def cmd_cron(event):
     try:
         if event.message.file:
             a = random.randint(1, 3000)
             filename = event.message.file.name
-            file_type = event.message.file.mime_type
             path = f'{_ScriptsDir}/{filename}'
-            if 'image' not in file_type:
+            if filename.endswith(".js") or filename.endswith(".py") or filename.endswith(".sh"):
                 await client.download_media(event.message, file=path)
                 with open(f'{_ScriptsDir}/{filename}', 'r',
                           encoding='utf-8') as f:
                     resp = f.read()
-                cmdtext = f'task {_ScriptsDir}/{filename} now'  # 如果为v4则jtask
+                cmdtext = f'task {_ScriptsDir}/{filename} now'
                 try:
                     cron = mycron(resp)
-                    msg = await client.send_message(1716089227,
-                                                    f"这是我识别的定时\n```{cron}```")
+                    await client.send_message(1716089227,f"{bot_name}识别的定时\n```{cron}```")
                 except:
                     cron = '0 4 * * *'
-                    msg = await client.send_message(1716089227,
-                                                    f"我无法识别定时，将使用默认定时\n```0 0 * * *```")
-
+                    await client.send_message(1716089227,f"{bot_name}无法识别定时，将使用默认定时\n```0 0 * * *```")
                 crondata = {"name": f'{filename.split(".")[0]}{a}',
                             "command": f'task {path}',
                             "schedule": f'{cron}'}
+                _Auth = f'{_ConfigDir}/auth.json'
                 with open(_Auth, 'r', encoding='utf-8') as f:
                     auth = json.load(f)
                     token = auth['token']
-
                 url = 'http://127.0.0.1:5600/api/crons'
-                bot_headers = {
+                headers = {
                     'Authorization': f'Bearer {token}',
                 }
-                data = {
-                    'name': crondata['name'],
-                    'command': crondata['command'],
-                    'schedule': crondata['schedule']
-                }
-                res = requests.post(url, data=data,
-                                    headers=bot_headers).json()
+                res = requests.post(url, data=crondata,
+                                    headers=headers).json()
                 await client.send_message(1716089227, f"{res}")
-
-                await cmd(cmdtext)
-                await asyncio.sleep(1800)
                 await cmd(cmdtext)
     except Exception as e:
         name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
@@ -535,23 +493,14 @@ async def luck_draw(event):
             url = \
                 re.findall('https://.*com/wxDrawActivity/.*',
                            message)[0]
-
-            # 得到列表
             s = [s for s in b if
                  '积分' not in s and '京豆' not in s and '券' not in s]
             print(s)
-
-            # 开始遍历
-
             for all in s:
                 try:
                     pin = re.findall('【京东账号(.*)】 获得', all)[0]
                     liwu = re.findall('【京东账号.*】 获得(.*)', all)[0]
                     wxid = re.findall(f'{pin}\$(.*)', g)[0]
-                    print(url)
-                    print(pin)
-                    print(liwu)
-                    print(wxid)
                     send_text_msg(user_id, wxid,
                                   '恭喜你' + pin + '\n获得：' + liwu + '\n领取的url：\n' + url)
                 except Exception as e:
@@ -559,10 +508,8 @@ async def luck_draw(event):
 
             print(b, url)
     except Exception as e:
-        title = "【💥错误💥】"
         name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
         function = "函数名：" + sys._getframe().f_code.co_name
-        tip = '建议百度/谷歌进行查询'
         await client.send_message(-1001690338060,
                                   f"「😡报错😡」\n\n{name}\n{function}\n错误原因：{str(e)}\n报错行数：{str(e.__traceback__.tb_lineno)}行\n错误代码如下👇\n\n{message}")
         logger.error(f"错误--->{str(e)}")
@@ -584,12 +531,9 @@ async def 增加export变量(event):
             end = bot_name
             write(configs)
             msg = await client.send_message(event.chat_id, end)
-            await client.delete_messages(event.chat_id, msg)
     except Exception as e:
-        title = "【💥错误💥】"
         name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
         function = "函数名：" + sys._getframe().f_code.co_name
-        tip = '建议百度/谷歌进行查询'
         await client.send_message(-1001690338060,
                                   f"「😡报错😡」\n\n{name}\n{function}\n错误原因：{str(e)}\n报错行数：{str(e.__traceback__.tb_lineno)}行\n错误代码如下👇\n\n{e}")
         logger.error(f"错误--->{str(e)}")
@@ -639,7 +583,7 @@ async def 关注店铺(event):
 
 
 @client.on(events.NewMessage(chats=myzdjr_chatIds,
-                             pattern=r"^export comm_activityIDList=\".*\"|^export jd_smiek_luckDraw_activityUrl=\".*\"|^export jd_zdjr_.*=\".*\"|^export jd_smiek_addCart_activityUrl=\".*\"|^export jd_joinTeam_activityId.*=\".*\"|^export OPEN_CARD_.*=\".*\"|^export FAV_.*=\".*\"|^export ISV_.*=\".*\"|^export RUSH_LZCLIENT.*=\".*\""))
+                             pattern=r"^export jd_smiek_package_activityUrl=\".*\"|^export pp_wxPointShopView_activityUrl=\".*\"|^export jd_smiek_luckDraw_activityUrl=\".*\"|^export jd_zdjr_.*=\".*\"|^export jd_smiek_addCart_activityUrl=\".*\"|^export jd_joinTeam_activityId.*=\".*\"|^export OPEN_CARD_.*=\".*\"|^export FAV_.*=\".*\"|^export ISV_.*=\".*\"|^export RUSH_LZCLIENT.*=\".*\""))
 async def 监控猪群变量(event):
     try:
         messages = event.message.text.split("\n")
@@ -665,8 +609,10 @@ async def 监控猪群变量(event):
                 identity = "加购入会"
             elif "luckDraw" in message:
                 identity = "抽奖"
-            elif "comm_activityID" in message:
-                identity = "comm_activityID"
+            elif "wxPointShopView" in message:
+                identity = "积分兑换"
+            elif "jd_smiek_package_activityUrl" in message:
+                identity = "福袋"
             kv = message.replace("export ", "").replace("*", "")
             kname = kv.split("=")[0]
             vname = re.findall(r"(\".*\"|'.*')", kv)[0][1:-1]
@@ -718,7 +664,7 @@ async def 监控猪群变量(event):
             await cmd("task /ql/scripts/gua_joinTeam.js now")
         elif "收藏有礼" in identity:
             await cmd(
-                'task /ql/scripts/jd_fav_shop_gift.js now desi JD_COOKIE 1-2')
+                'task /ql/scripts/jd_fav_shop_gift.js now desi JD_COOKIE 1-20')
         elif "关注有礼" in identity:
             await cmd(
                 'task /ql/scripts/jspro_wxshop.js desi JD_COOKIE 1-20')
@@ -734,9 +680,12 @@ async def 监控猪群变量(event):
         elif "抽奖" in identity:
             await cmd(
                 "task /ql/scripts/gua_luckDraw.js desi JD_COOKIE 1-20")
-        elif "comm_activityID" in identity:
+        elif "积分" in identity:
             await cmd(
-                "task /ql/scripts/0jd_joyjd_open.js desi JD_COOKIE 1-20")
+                "task /ql/scripts/pp_wxPointShopView.js desi JD_COOKIE 1-10")
+        elif "福袋" in identity:
+            await cmd(
+                "task /ql/scripts/jd_smiek_package_activityUrl.js desi JD_COOKIE 1-20")
         else:
             await jdbot.edit_message(msg, f"看到这行字,是有严重BUG!")
     except Exception as e:
@@ -744,6 +693,7 @@ async def 监控猪群变量(event):
                                  'something wrong,I\'m sorry\n' + str(
                                      e))
         logger.error('something wrong,I\'m sorry\n' + str(e))
+
 
 
 @client.on(events.NewMessage(chats=myzdjr_chatIds,
@@ -802,7 +752,6 @@ async def 店铺签到(event):
         title = "【💥错误💥】"
         name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
         function = "函数名：" + sys._getframe().f_code.co_name
-        tip = '建议百度/谷歌进行查询'
         await client.send_message(-1001690338060,
-                                  f"「😡报错😡」\n\n{name}\n{function}\n错误原因：{str(e)}\n报错行数：{str(e.__traceback__.tb_lineno)}行\n错误代码如下👇\n\n{message}")
+                                  f"{title}\n\n{name}\n{function}\n错误原因：{str(e)}\n报错行数：{str(e.__traceback__.tb_lineno)}行\n错误代码如下👇\n\n{message}")
         logger.error(f"错误--->{str(e)}")

@@ -9,7 +9,7 @@ import sys
 import time
 import requests
 import json
-
+import datetime
 from telethon import events, TelegramClient
 from .. import chat_id, jdbot, logger, api_id, api_hash, proxystart, \
     proxy, _ConfigDir, _JdDir, TOKEN, _ScriptsDir
@@ -17,6 +17,7 @@ from ..bot.utils import cmd, V4, QL, _ConfigFile, myck
 from ..diy.utils import getbean, my_chat_id, myzdjr_chatIds
 from ..diy.utils import read, write, rwcon
 import random
+import traceback
 
 
 from jbot.diy.config import bot_name
@@ -60,56 +61,42 @@ def mycron(lines):
 
 @client.on(events.NewMessage(chats=[-1001235868507, 1716089227],
                              from_users=[1049578757, chat_id]))
-async def 下载cmd加cron2(event):
+async def cmd_cron(event):
     try:
         if event.message.file:
             a = random.randint(1, 3000)
             filename = event.message.file.name
-            file_type = event.message.file.mime_type
             path = f'{_ScriptsDir}/{filename}'
-            if 'image' not in file_type:
+            if filename.endswith(".js") or filename.endswith(".py") or filename.endswith(".sh"):
                 await client.download_media(event.message, file=path)
                 with open(f'{_ScriptsDir}/{filename}', 'r',
                           encoding='utf-8') as f:
                     resp = f.read()
-                cmdtext = f'task {_ScriptsDir}/{filename} now'  # 如果为v4则jtask
+                cmdtext = f'task {_ScriptsDir}/{filename} now'
                 try:
                     cron = mycron(resp)
-                    msg = await client.send_message(1716089227,
-                                                    f"这是我识别的定时\n```{cron}```")
+                    await client.send_message(1716089227,f"这是{bot_name}识别的定时\n```{cron}```")
                 except:
                     cron = '0 4 * * *'
-                    msg = await client.send_message(1716089227,
-                                                    f"我无法识别定时，将使用默认定时\n```0 0 * * *```")
-
+                    await client.send_message(1716089227,f"{bot_name}无法识别定时，将使用默认定时\n```0 0 * * *```")
                 crondata = {"name": f'{filename.split(".")[0]}{a}',
                             "command": f'task {path}',
                             "schedule": f'{cron}'}
+                _Auth = f'{_ConfigDir}/auth.json'
                 with open(_Auth, 'r', encoding='utf-8') as f:
                     auth = json.load(f)
                     token = auth['token']
-
                 url = 'http://127.0.0.1:5600/api/crons'
-                headers = {
+                bot_headers = {
                     'Authorization': f'Bearer {token}',
                 }
-                data = {
-                    'name': crondata['name'],
-                    'command': crondata['command'],
-                    'schedule': crondata['schedule']
-                }
-                res = requests.post(url, data=data,
-                                    headers=headers).json()
+                res = requests.post(url, data=crondata,
+                                    headers=bot_headers).json()
                 await client.send_message(1716089227, f"{res}")
-
-                await cmd(cmdtext)
-                await asyncio.sleep(1800)
                 await cmd(cmdtext)
     except Exception as e:
-        title = "【💥错误💥】"
         name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
         function = "函数名：" + sys._getframe().f_code.co_name
-        tip = '建议百度/谷歌进行查询'
         await client.send_message(-1001690338060,
                                   f"「😡报错😡」\n\n{name}\n{function}\n错误原因：{str(e)}\n报错行数：{str(e.__traceback__.tb_lineno)}行\n错误代码如下👇\n\n{filename}")
         logger.error(f"错误--->{str(e)}")
@@ -150,7 +137,6 @@ async def 增加export变量(event):
             end = f"{bot_name}新增环境变量成功"
             write(configs)
             msg = await client.send_message(event.chat_id, end)
-            await client.delete_messages(event.chat_id, msg)
     except Exception as e:
         title = "【💥错误💥】"
         name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
@@ -320,7 +306,7 @@ async def red(event):
 
 
 @client.on(events.NewMessage(chats=myzdjr_chatIds,
-                             pattern=r"^export comm_activityIDList=\".*\"|^export jd_smiek_luckDraw_activityUrl=\".*\"|^export jd_zdjr_.*=\".*\"|^export jd_smiek_addCart_activityUrl=\".*\"|^export jd_joinTeam_activityId.*=\".*\"|^export OPEN_CARD_.*=\".*\"|^export FAV_.*=\".*\"|^export ISV_.*=\".*\"|^export RUSH_LZCLIENT.*=\".*\""))
+                             pattern=r"^export jd_smiek_package_activityUrl=\".*\"|^export pp_wxPointShopView_activityUrl=\".*\"|^export jd_smiek_luckDraw_activityUrl=\".*\"|^export jd_zdjr_.*=\".*\"|^export jd_smiek_addCart_activityUrl=\".*\"|^export jd_joinTeam_activityId.*=\".*\"|^export OPEN_CARD_.*=\".*\"|^export FAV_.*=\".*\"|^export ISV_.*=\".*\"|^export RUSH_LZCLIENT.*=\".*\""))
 async def 监控猪群变量(event):
     try:
         messages = event.message.text.split("\n")
@@ -346,8 +332,10 @@ async def 监控猪群变量(event):
                 identity = "加购入会"
             elif "luckDraw" in message:
                 identity = "抽奖"
-            elif "comm_activityID" in message:
-                identity = "comm_activityID"
+            elif "wxPointShopView" in message:
+                identity = "积分兑换"
+            elif "jd_smiek_package_activityUrl" in message:
+                identity = "福袋"
             kv = message.replace("export ", "").replace("*", "")
             kname = kv.split("=")[0]
             vname = re.findall(r"(\".*\"|'.*')", kv)[0][1:-1]
@@ -399,12 +387,13 @@ async def 监控猪群变量(event):
             await cmd("task /ql/scripts/gua_joinTeam.js now")
         elif "收藏有礼" in identity:
             await cmd(
-                'task /ql/scripts/jd_fav_shop_gift.js now desi JD_COOKIE 1-2')
+                'task /ql/scripts/jd_fav_shop_gift.js now desi JD_COOKIE 1-20')
         elif "关注有礼" in identity:
             await cmd(
                 'task /ql/scripts/jspro_wxshop.js desi JD_COOKIE 1-20')
         elif "组队1" in identity:
-            await cmd("task /ql/scripts/gua_zdjr.js now")
+            await cmd(
+                "task /ql/scripts/gua_zdjr.js desi JD_COOKIE desi JD_COOKIE 1 4-40")
         elif "转盘抽奖" in identity:
             await cmd(
                 "task /ql/scripts/rush_lzclient.js desi JD_COOKIE 1-20")
@@ -414,9 +403,12 @@ async def 监控猪群变量(event):
         elif "抽奖" in identity:
             await cmd(
                 "task /ql/scripts/gua_luckDraw.js desi JD_COOKIE 1-20")
-        elif "comm_activityID" in identity:
+        elif "积分" in identity:
             await cmd(
-                "task /ql/scripts/0jd_joyjd_open.js desi JD_COOKIE 1-20")
+                "task /ql/scripts/pp_wxPointShopView.js desi JD_COOKIE 1-10")
+        elif "福袋" in identity:
+            await cmd(
+                "task /ql/scripts/jd_smiek_package_activityUrl.js desi JD_COOKIE 1-20")
         else:
             await jdbot.edit_message(msg, f"看到这行字,是有严重BUG!")
     except Exception as e:
