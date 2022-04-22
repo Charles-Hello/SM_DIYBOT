@@ -10,4 +10,4 @@ import requests
 import json
 
 
-bot_name = 'smell!'
+bot_name = 'smell'
