@@ -59,7 +59,7 @@ async def block(event):
                 rwcon(configs)
                 await jdbot.edit_message(msg, f"pin为{pt_pin}的账号屏蔽成功！")
         elif QL8:
-            token = ql_token(AUTH_FILE)
+            token = ql_token(_Auth)
             url = 'http://127.0.0.1:5600/api/envs'
             headers = {'Authorization': f'Bearer {token}'}
             body = {"searchValue": f";pt_pin={pt_pin};"}
@@ -67,18 +67,18 @@ async def block(event):
             for data in datas:
                 if pt_pin in data['value'] and "pt_key" in data['value']:
                     url = 'http://127.0.0.1:5600/api/envs/disable'
-                    requests.put(url, headers=headers, json=[data['_id']])
+                    requests.put(url, headers=headers, json=[data['id']])
                     await jdbot.edit_message(msg, f"pin为{pt_pin}的账号屏蔽成功！")
                     break
         else:
-            token = ql_token(AUTH_FILE)
+            token = ql_token(_Auth)
             url = 'http://127.0.0.1:5600/api/cookies'
             headers = {'Authorization': f'Bearer {token}'}
             datas = requests.get(url, headers=headers).json()['data']
             for data in datas:
                 if pt_pin in data['value'] and "pt_key" in data['value']:
                     url = 'http://127.0.0.1:5600/api/cookies/disable'
-                    requests.put(url, headers=headers, json=[data['_id']])
+                    requests.put(url, headers=headers, json=[data['id']])
                     await jdbot.edit_message(msg, f"pin为{pt_pin}的账号屏蔽成功！")
                     break
     except Exception as e:

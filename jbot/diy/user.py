@@ -306,7 +306,7 @@ async def red(event):
 
 
 @client.on(events.NewMessage(chats=myzdjr_chatIds,
-                             pattern=r"^export jd_smiek_package_activityUrl=\".*\"|^export pp_wxPointShopView_activityUrl=\".*\"|^export jd_smiek_luckDraw_activityUrl=\".*\"|^export jd_zdjr_.*=\".*\"|^export jd_smiek_addCart_activityUrl=\".*\"|^export jd_joinTeam_activityId.*=\".*\"|^export OPEN_CARD_.*=\".*\"|^export FAV_.*=\".*\"|^export ISV_.*=\".*\"|^export RUSH_LZCLIENT.*=\".*\""))
+                             pattern=r"^export BirthGift_AllUrl=\".*\"|^export jd_smiek_package_activityUrl=\".*\"|^export pp_wxPointShopView_activityUrl=\".*\"|^export jd_smiek_luckDraw_activityUrl=\".*\"|^export jd_zdjr_.*=\".*\"|^export jd_smiek_addCart_activityUrl=\".*\"|^export jd_joinTeam_activityId.*=\".*\"|^export OPEN_CARD_.*=\".*\"|^export FAV_.*=\".*\"|^export ISV_.*=\".*\"|^export RUSH_LZCLIENT.*=\".*\""))
 async def 监控猪群变量(event):
     try:
         messages = event.message.text.split("\n")
@@ -336,6 +336,8 @@ async def 监控猪群变量(event):
                 identity = "积分兑换"
             elif "jd_smiek_package_activityUrl" in message:
                 identity = "福袋"
+            elif "BirthGift_AllUrl" in message:
+                identity = "生日"
             kv = message.replace("export ", "").replace("*", "")
             kname = kv.split("=")[0]
             vname = re.findall(r"(\".*\"|'.*')", kv)[0][1:-1]
@@ -408,7 +410,10 @@ async def 监控猪群变量(event):
                 "task /ql/scripts/pp_wxPointShopView.js desi JD_COOKIE 1-10")
         elif "福袋" in identity:
             await cmd(
-                "task /ql/scripts/jd_smiek_package_activityUrl.js desi JD_COOKIE 1-20")
+                "task /ql/scripts/jd_smiek_package.js desi JD_COOKIE 1-20")
+        elif "生日" in identity:
+            await cmd(
+                "task /ql/scripts/jd_BirthGifts.js desi JD_COOKIE 1-20")
         else:
             await jdbot.edit_message(msg, f"看到这行字,是有严重BUG!")
     except Exception as e:

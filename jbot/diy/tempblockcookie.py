@@ -195,8 +195,8 @@ async def ql_block(sender):
                         cookie = data['value']
                         remarks = data['nickname']
                         status = data['status']
-                        _id = data['_id']
-                        cookiedatas.append([cknum, cookie, remarks, status, _id])
+                        id = data['id']
+                        cookiedatas.append([cknum, cookie, remarks, status, id])
                 except:
                     ql_version = '2.8+'
                     url = 'http://127.0.0.1:5600/api/envs'
@@ -206,7 +206,7 @@ async def ql_block(sender):
                     }
                     datas = requests.get(url, params=body, headers=headers).json()['data']
                     for data in datas:
-                        cookiedatas.append([datas.index(data) + 1, data['value'], data['remarks'] if 'remarks' in data.keys() else "未备注", '启用' if data['status'] == 0 else '禁用', data['_id']])
+                        cookiedatas.append([datas.index(data) + 1, data['value'], data['remarks'] if 'remarks' in data.keys() else "未备注", '启用' if data['status'] == 0 else '禁用', data['id']])
                 if res == 'query start and stop status':
                     message = "目前启停状态\n\n"
                     for cookiedata in cookiedatas:
@@ -288,22 +288,22 @@ async def ql_block(sender):
                             url = 'http://127.0.0.1:5600/api/envs/enable'
                     message = ""
                     if "disable" in res:
-                        for _id in _ids:
-                            body = [f"{_id[-1]}"]
+                        for id in _ids:
+                            body = [f"{id[-1]}"]
                             r = requests.put(url, json=body, headers=headers)
                             if r.ok:
-                                message += f"账号{_id[0]}禁用成功\n"
+                                message += f"账号{id[0]}禁用成功\n"
                             else:
-                                message += f"账号{_id[0]}禁用失败，请手动禁用\n"
+                                message += f"账号{id[0]}禁用失败，请手动禁用\n"
                         return await operate(conv, sender, msg, message)
                     else:
-                        for _id in _ids:
-                            body = [f"{_id[-1]}"]
+                        for id in _ids:
+                            body = [f"{id[-1]}"]
                             r = requests.put(url, json=body, headers=headers)
                             if r.ok:
-                                message += f"账号{_id[0]}启用成功\n"
+                                message += f"账号{id[0]}启用成功\n"
                             else:
-                                message += f"账号{_id[0]}启用失败，请手动启用\n"
+                                message += f"账号{id[0]}启用失败，请手动启用\n"
                         return await operate(conv, sender, msg, message)
     except exceptions.TimeoutError:
         await jdbot.edit_message(msg, '选择已超时，对话已停止，感谢你的使用')
@@ -359,7 +359,7 @@ async def ql_appoint(ck_num):
         body = {'t': int(round(time.time() * 1000))}
         datas = requests.get(url, params=body, headers=headers).json()['data']
         for data in datas:
-            cookiedatas.append([datas.index(data) + 1, data['_id']])
+            cookiedatas.append([datas.index(data) + 1, data['id']])
     except:
         ql_version = '2.8+'
         url = 'http://127.0.0.1:5600/api/envs'
@@ -369,7 +369,7 @@ async def ql_appoint(ck_num):
         }
         datas = requests.get(url, params=body, headers=headers).json()['data']
         for data in datas:
-            cookiedatas.append([datas.index(data) + 1, data['_id']])
+            cookiedatas.append([datas.index(data) + 1, data['id']])
     if len(cookiedatas) < int(ck_num):
         await jdbot.edit_message(msg, f"无法找到账号{ck_num}的信息，禁用失败")
         return
@@ -451,7 +451,7 @@ async def myautoblock(event):
             for data in datas:
                 if pt_pin in data['value'] and "pt_key" in data['value']:
                     url = 'http://127.0.0.1:5600/api/envs/disable'
-                    requests.put(url, headers=headers, json=[data['_id']])
+                    requests.put(url, headers=headers, json=[data['id']])
                     await jdbot.edit_message(msg, f"【成功】{pt_pin}屏蔽成功！")
                     break
         else:
@@ -462,7 +462,7 @@ async def myautoblock(event):
             for data in datas:
                 if pt_pin in data['value'] and "pt_key" in data['value']:
                     url = 'http://127.0.0.1:5600/api/cookies/disable'
-                    requests.put(url, headers=headers, json=[data['_id']])
+                    requests.put(url, headers=headers, json=[data['id']])
                     await jdbot.edit_message(msg, f"【成功】{pt_pin}屏蔽成功！")
                     break
     except Exception as e:
