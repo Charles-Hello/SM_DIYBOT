@@ -582,7 +582,7 @@ async def 关注店铺(event):
         logger.error(f"错误--->{str(e)}")
 
 @client.on(events.NewMessage(chats=myzdjr_chatIds,
-                             pattern=r"^export BirthGift_AllUrl=\".*\"|^export jd_smiek_package_activityUrl=\".*\"|^export pp_wxPointShopView_activityUrl=\".*\"|^export jd_smiek_luckDraw_activityUrl=\".*\"|^export jd_zdjr_.*=\".*\"|^export jd_smiek_addCart_activityUrl=\".*\"|^export jd_joinTeam_activityId.*=\".*\"|^export OPEN_CARD_.*=\".*\"|^export FAV_.*=\".*\"|^export ISV_.*=\".*\"|^export RUSH_LZCLIENT.*=\".*\""))
+                             pattern=r"^export jdjoyInvite_AllUrl=""=\".*\"|^export BirthGift_AllUrl=\".*\"|^export jd_smiek_package_activityUrl=\".*\"|^export pp_wxPointShopView_activityUrl=\".*\"|^export jd_smiek_luckDraw_activityUrl=\".*\"|^export jd_zdjr_.*=\".*\"|^export jd_smiek_addCart_activityUrl=\".*\"|^export jd_joinTeam_activityId.*=\".*\"|^export OPEN_CARD_.*=\".*\"|^export FAV_.*=\".*\"|^export ISV_.*=\".*\"|^export RUSH_LZCLIENT.*=\".*\""))
 async def 监控猪群变量(event):
     try:
         messages = event.message.text.split("\n")
@@ -614,6 +614,8 @@ async def 监控猪群变量(event):
                 identity = "福袋"
             elif "BirthGift_AllUrl" in message:
                 identity = "生日"
+            elif "jdjoyInvite_AllUrl=" in message:
+                identity = "邀请"
             kv = message.replace("export ", "").replace("*", "")
             kname = kv.split("=")[0]
             vname = re.findall(r"(\".*\"|'.*')", kv)[0][1:-1]
@@ -660,36 +662,39 @@ async def 监控猪群变量(event):
         await jdbot.edit_message(msg, end)
         if "开卡" in identity:
             await cmd(
-                'task /ql/scripts/jd_open_card_by_shopid.js desi JD_COOKIE 1-20')
+                'task /ql/scripts/jd_open_card_by_shopid.js desi JD_COOKIE 1-15')
         elif "组队2" in identity:
             await cmd("task /ql/scripts/gua_joinTeam.js now")
         elif "收藏有礼" in identity:
             await cmd(
-                'task /ql/scripts/jd_fav_shop_gift.js now desi JD_COOKIE 1-20')
+                'task /ql/scripts/jd_fav_shop_gift.js now desi JD_COOKIE 1-15')
         elif "关注有礼" in identity:
             await cmd(
-                'task /ql/scripts/jspro_wxshop.js desi JD_COOKIE 1-20')
+                'task /ql/scripts/jspro_wxshop.js desi JD_COOKIE 1-15')
         elif "组队1" in identity:
             await cmd(
                 "task /ql/scripts/gua_zdjr.js desi JD_COOKIE desi JD_COOKIE 1 4-40")
         elif "转盘抽奖" in identity:
             await cmd(
-                "task /ql/scripts/rush_lzclient.js desi JD_COOKIE 1-20")
+                "task /ql/scripts/rush_lzclient.js desi JD_COOKIE 1-15")
         elif "加购入会" in identity:
             await cmd(
-                "task /ql/scripts/gua_addCart.js desi JD_COOKIE 1-20")
+                "task /ql/scripts/gua_addCart.js desi JD_COOKIE 1-15")
         elif "抽奖" in identity:
             await cmd(
-                "task /ql/scripts/gua_luckDraw.js desi JD_COOKIE 1-20")
+                "task /ql/scripts/gua_luckDraw.js desi JD_COOKIE 1-15")
         elif "积分" in identity:
             await cmd(
                 "task /ql/scripts/pp_wxPointShopView.js desi JD_COOKIE 1-10")
         elif "福袋" in identity:
             await cmd(
-                "task /ql/scripts/jd_smiek_package.js desi JD_COOKIE 1-20")
+                "task /ql/scripts/jd_smiek_package.js desi JD_COOKIE 1-15")
         elif "生日" in identity:
             await cmd(
-                "task /ql/scripts/jd_BirthGifts.js desi JD_COOKIE 1-20")
+                "task /ql/scripts/jd_BirthGifts.js desi JD_COOKIE 1-15")
+        elif "邀新" in identity:
+            await cmd(
+                "task /ql/scripts/gua_invite_join_shop.js")
         else:
             await jdbot.edit_message(msg, f"看到这行字,是有严重BUG!")
     except Exception as e:
