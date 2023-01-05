@@ -29,7 +29,7 @@ if [ -d "/jd" ]; then root=/jd; else root=/ql;if [ -f $root/diybot.sh ]; then rm
 1. **重启程序**
 
 ```shell
-if [ -d '/jd' ]; then cd /jd/jbot; pm2 start ecosystem.config.js; cd /jd; pm2 restart jbot; else ps -ef | grep 'python3 -m jbot' | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null; nohup python3 -m jbot >/ql/log/bot/bot.log 2>&1 & fi 
+if [ -d '/jd' ]; then cd /jd/jbot; pm2 start ecosystem.config.js; cd /jd; pm2 restart jbot; else ps -ef | grep 'python3 -m jbot' | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null; nohup python3 -m jbot >/ql/data/log/bot/bot.log 2>&1 & fi 
 ```
 
 ## 配套QL辅助脚本
