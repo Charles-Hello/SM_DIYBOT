@@ -561,14 +561,15 @@ def creat_qr(text):
 @jdbot.on(events.NewMessage(from_users=chat_id,pattern=r'^/userlogin$'))
 async def user_login(event):
     try:
-        user.connect()
-        qr_login = await user.qr_login()
+        await client.connect()
+        qr_login = await client.qr_login()
         creat_qr(qr_login.url)
         await jdbot.send_message(chat_id,'请使用TG扫描二维码以开启USER',file=QR_IMG_FILE)
         await qr_login.wait(timeout=100)
         await jdbot.send_message(chat_id,'恭喜您已登录成功,请修改 /set 将开启user 改为True 并重启机器人 /reboot')
     except Exception as e:
         await jdbot.send_message(chat_id,'登录失败\n'+str(e))
+
 
 @jdbot.on(events.NewMessage(from_users=chat_id,pattern=r'^/rmuser$'))
 async def user_login(event):
