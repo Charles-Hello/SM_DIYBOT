@@ -51,7 +51,7 @@ six==1.16.0
 sniffio==1.2.0
 sqlparse==0.4.2
 starlette==0.17.1
-Telethon==1.21.1
+Telethon==1.25.4
 tencentcloud-sdk-python==3.0.611
 toml==0.10.2
 tomli==1.2.2
