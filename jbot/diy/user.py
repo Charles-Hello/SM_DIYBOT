@@ -210,7 +210,7 @@ async def 京豆雨(event):
             return
         try:
             if "jd_redrain_half_url" in event.message.text:
-                await cmd('task /ql/scripts/jd_redrain_half.js now')
+                await cmd('task /ql/data/scripts/jd_redrain_half.js now')
                 msg = await jdbot.send_message(chat_id, r'`更换半点雨ID完毕')
                 await asyncio.sleep(1)
                 await jdbot.delete_messages(chat_id, msg)
@@ -411,63 +411,63 @@ async def 监控猪群变量(event):
             return
         await jdbot.edit_message(msg, end)
         if "开卡" in identity:
-            await cmd('task /ql/scripts/jd_open_card_by_shopid.js now')
+            await cmd('task /ql/data/scripts/jd_open_card_by_shopid.js now')
         elif "组队2" in identity:
-            await cmd("task /ql/scripts/gua_joinTeam3.js now")
+            await cmd("task /ql/data/scripts/gua_joinTeam3.js now")
         elif "收藏有礼" in identity:
             await cmd(
-                'task /ql/scripts/jd_fav_shop_gift.js now')
+                'task /ql/data/scripts/jd_fav_shop_gift.js now')
         elif "关注有礼" in identity:
             await cmd(
-                'task /ql/scripts/jspro_wxshop.js now')
+                'task /ql/data/scripts/jspro_wxshop.js now')
         elif "组队1" in identity:
             await cmd(
-                "task /ql/scripts/gua_zdjr.js now")
+                "task /ql/data/scripts/gua_zdjr.js now")
         elif "转盘抽奖" in identity:
             await cmd(
-                "task /ql/scripts/rush_lzclient.js now")
+                "task /ql/data/scripts/rush_lzclient.js now")
         elif "加购入会" in identity:
             await cmd(
-                "task /ql/scripts/gua_addCart.js now")
+                "task /ql/data/scripts/gua_addCart.js now")
         elif "抽奖" in identity:
             await cmd(
-                "task /ql/scripts/gua_luckDraw.js now")
+                "task /ql/data/scripts/gua_luckDraw.js now")
         elif "积分" in identity:
             await cmd(
-                "task /ql/scripts/pp_wxPointShopView.js now")
+                "task /ql/data/scripts/pp_wxPointShopView.js now")
         elif "福袋" in identity:
             await cmd(
-                "task /ql/scripts/jd_smiek_package.js now")
+                "task /ql/data/scripts/jd_smiek_package.js now")
         elif "生日" in identity:
             await cmd(
-                "task /ql/scripts/jd_BirthGifts.js now")
+                "task /ql/data/scripts/jd_BirthGifts.js now")
         elif "邀新" in identity:
             await cmd(
-                "task /ql/scripts/gua_invite_join_shop.js now" )
+                "task /ql/data/scripts/gua_invite_join_shop.js now" )
         elif "集卡" in identity:
             await cmd(
-                "task /ql/scripts/gua_collectcard.js now" )
+                "task /ql/data/scripts/gua_collectcard.js now" )
         elif "pp" in identity:
             await cmd(
-                "task /ql/scripts/pp_wuxian.js now" )
+                "task /ql/data/scripts/pp_wuxian.js now" )
         elif "sign" in identity:
             await cmd(
-                "task /ql/scripts/gua_shopsign2.js now" )
+                "task /ql/data/scripts/gua_shopsign2.js now" )
         elif "完善" in identity:
             await cmd(
-                "task /ql/scripts/0jd_CompleteInfo.js now" )
+                "task /ql/data/scripts/0jd_CompleteInfo.js now" )
         elif "新活动" in identity:
             await cmd(
-                "task /ql/scripts/gua_interact.js now" )
+                "task /ql/data/scripts/gua_interact.js now" )
         elif "刮刮乐" in identity:
             await cmd(
-                "task /ql/scripts/gua_getPopSign.js now" )
+                "task /ql/data/scripts/gua_getPopSign.js now" )
         elif "看" in identity:
             await cmd(
-                "task /ql/scripts/gua_getPopSign.js now" )
+                "task /ql/data/scripts/gua_getPopSign.js now" )
         elif "拆红包" in identity:
             await cmd(
-                "task /ql/scripts/jd_WxHbShare.js now" )
+                "task /ql/data/scripts/jd_WxHbShare.js now" )
         else:
             await jdbot.edit_message(msg, f"看到这行字,是有严重BUG!")
     except Exception as e:
@@ -569,7 +569,6 @@ async def user_login(event):
         await jdbot.send_message(chat_id,'恭喜您已登录成功,请修改 /set 将开启user 改为True 并重启机器人 /reboot')
     except Exception as e:
         await jdbot.send_message(chat_id,'登录失败\n'+str(e))
-
 
 @jdbot.on(events.NewMessage(from_users=chat_id,pattern=r'^/rmuser$'))
 async def user_login(event):
